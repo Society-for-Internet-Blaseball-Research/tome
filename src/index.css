@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+    @apply bg-white text-gray-900 antialiased min-h-screen;
+}
+
+:root.dark {
+    body {
+        @apply bg-black text-gray-100;
+    }
+}
