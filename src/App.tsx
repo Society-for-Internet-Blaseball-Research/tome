@@ -2,6 +2,28 @@ import React from "react";
 import { useGameData } from "./lib/game";
 import Error from "./Error";
 
+function StatCard({stats, cols}) {
+  return (
+    <table>
+      <tr>
+        <td />
+        {cols.map((col) => (
+          <th>{col[1]}</th>
+        ))}
+      </tr>
+      {stats.player.map((sheet) => (
+        cols.reduce((a, b) => (sheet[a[0]] || 0) + (sheet[b[0]] || 0), 0) > 0 &&
+          <tr>
+            <th>{sheet.name}</th>
+            {cols.map((col) => (
+              <td>{sheet[col[0]]}</td>
+            ))}
+          </tr>
+      ))}
+    </table>
+  );
+}
+
 function App() {
   const { error, game, stats } = useGameData(
     // TODO routing
@@ -14,22 +36,26 @@ function App() {
     return <div className="container mx-auto px-4">loading...</div>;
   }
 
-  const cols = [
-    "atBats",
-    "doubles",
-    "earnedRuns",
-    "hits",
-    "hitsAllowed",
-    "homeRuns",
-    "pitchesThrown",
-    "quadruples",
-    "rbis",
-    "runs",
-    "stolenBases",
-    "strikeouts",
-    "triples",
-    "walks",
-    "walksIssued",
+  const battingCols = [
+    ["atBats", "AB"],
+    ["runs", "R"],
+    ["hits", "H"],
+    ["doubles", "2B"],
+    ["triples", "3B"],
+    ["quadruples", "4B"],
+    ["homeRuns", "HR"],
+    ["stolenBases", "SB"],
+    ["struckouts", "K"],
+    ["walks", "BB"],
+    ["rbis", "RBI"],
+  ] as const;
+
+  const pitchingCols = [
+    ["pitchesThrown", "P"],
+    ["hitsAllowed", "H"],
+    ["strikeouts", "K"],
+    ["walksIssued", "BB"],
+    ["earnedRuns", "R"],
   ] as const;
 
   return (
@@ -39,22 +65,8 @@ function App() {
         <br />
         {game.awayTeamNickname} at {game.homeTeamNickname}
       </p>
-      <table>
-        <tr>
-          <td />
-          {cols.map((col) => (
-            <th>{col}</th>
-          ))}
-        </tr>
-        {stats.player.map((sheet) => (
-          <tr>
-            <th>{sheet.name}</th>
-            {cols.map((col) => (
-              <td>{sheet[col]}</td>
-            ))}
-          </tr>
-        ))}
-      </table>
+      <StatCard stats={stats} cols={battingCols} />
+      <StatCard stats={stats} cols={pitchingCols} />
     </div>
   );
 }
