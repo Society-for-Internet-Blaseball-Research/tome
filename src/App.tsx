@@ -2,7 +2,7 @@ import React from "react";
 import { useGameData } from "./lib/game";
 import Error from "./Error";
 
-function StatCard({stats, cols}) {
+function StatCard({ stats, cols }) {
   return (
     <table>
       <tr>
@@ -11,15 +11,18 @@ function StatCard({stats, cols}) {
           <th>{col[1]}</th>
         ))}
       </tr>
-      {stats.player.map((sheet) => (
-        cols.reduce((a, b) => (sheet[a[0]] || 0) + (sheet[b[0]] || 0), 0) > 0 &&
-          <tr>
-            <th>{sheet.name}</th>
-            {cols.map((col) => (
-              <td>{sheet[col[0]]}</td>
-            ))}
-          </tr>
-      ))}
+      {stats.player.map(
+        (sheet) =>
+          cols.reduce((a, b) => (sheet[a[0]] || 0) + (sheet[b[0]] || 0), 0) >
+            0 && (
+            <tr>
+              <th>{sheet.name}</th>
+              {cols.map((col) => (
+                <td>{sheet[col[0]]}</td>
+              ))}
+            </tr>
+          )
+      )}
     </table>
   );
 }
