@@ -115,7 +115,27 @@ export function useGameData(id: string): GameDataHookReturn {
           ids: ids.join(","),
         }
       )
-        .then((data) => setPlayerStatsheets(data))
+        .then((data) => {
+          const group = data.reduce((rv, x) => {
+            (rv[x.playerId] = rv[x.playerId] || []).push(x);
+            return rv;
+          }, {});
+          let d = [];
+          for (const key in group) {
+            d.push(group[key].reduce((rv, x) => {
+              let r = {};
+              for (const k in x) {
+                if (k === "id" || k === "playerId" || k === "name" || k === "team" || k === "teamId") {
+                  r[k] = x[k];
+                } else {
+                  r[k] = x[k] + (rv[k] || 0);
+                }
+              }
+              return r;
+            }, {}));
+          }
+          setPlayerStatsheets(d);
+        })
         .catch((err) => setError(err));
     }
   }, [teamStatsheets, ...updateStatsOn]);

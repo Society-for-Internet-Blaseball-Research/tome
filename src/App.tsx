@@ -2,7 +2,8 @@ import React from "react";
 import { useGameData } from "./lib/game";
 import Error from "./Error";
 
-function StatCard({ stats, cols }) {
+function StatCard({ stats, cols, team }) {
+  console.log(stats.player[0]);
   return (
     <table>
       <tr>
@@ -12,9 +13,8 @@ function StatCard({ stats, cols }) {
         ))}
       </tr>
       {stats.player.map(
-        (sheet) =>
-          cols.reduce((a, b) => (sheet[a[0]] || 0) + (sheet[b[0]] || 0), 0) >
-            0 && (
+        (sheet) => (
+          sheet[cols[0][0]] > 0 && (!team || sheet.team === team) && (
             <tr>
               <th>{sheet.name}</th>
               {cols.map((col) => (
@@ -22,7 +22,7 @@ function StatCard({ stats, cols }) {
               ))}
             </tr>
           )
-      )}
+        ))}
     </table>
   );
 }
@@ -68,7 +68,8 @@ function App() {
         <br />
         {game.awayTeamNickname} at {game.homeTeamNickname}
       </p>
-      <StatCard stats={stats} cols={battingCols} />
+      <StatCard stats={stats} cols={battingCols} team={game.awayTeamName}/>
+      <StatCard stats={stats} cols={battingCols} team={game.homeTeamName}/>
       <StatCard stats={stats} cols={pitchingCols} />
     </div>
   );

@@ -29,6 +29,8 @@ export interface PlayerStatsheet {
   id: string;
   playerId: string;
   name: string;
+  team: string;
+  teamId: string;
 
   // TODO verify if all of these are actually in use
   atBats: number;
