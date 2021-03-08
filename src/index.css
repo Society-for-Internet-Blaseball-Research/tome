@@ -11,3 +11,7 @@ body {
         @apply bg-black text-gray-100;
     }
 }
+
+tr {
+    @apply text-xs;
+}
