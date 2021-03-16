@@ -18,30 +18,33 @@ const StatCard = ({
   cols: any;
   team?: string;
 }) => (
-  <table>
-    <tr>
-      <td />
-      {cols.map((col: any) => (
-        <th>{col[1]}</th>
-      ))}
-    </tr>
-    {stats.player.map(
-      (sheet: any) =>
-        sheet[cols[0][0]] > 0 &&
-        (!team || sheet.team === team) && (
-          <tr>
-            <th>{sheet.name}</th>
-            {cols.map((col: any) => (
-              <td>{sheet[col[0]]}</td>
-            ))}
-          </tr>
-        )
-    )}
-  </table>
+  <div className="statCard">
+    {team && <div>{team}</div>}
+    <table>
+      <tr>
+        <td />
+        {cols.map((col: any) => (
+          <th>{col[1]}</th>
+        ))}
+      </tr>
+      {stats.player.map(
+        (sheet: any) =>
+          sheet[cols[0][0]] > 0 &&
+          (!team || sheet.team === team) && (
+            <tr className="statRow">
+              <th className="playerName">{sheet.name}</th>
+              {cols.map((col: any) => (
+                <td className="statCell">{sheet[col[0]]}</td>
+              ))}
+            </tr>
+          )
+      )}
+    </table>
+  </div>
 );
 
 const BoxScore = ({ gameId }: { gameId: string | undefined }) => {
-  if (gameId === undefined) {
+  if (!gameId) {
     return <div>Select a game.</div>;
   }
   const { error, game, stats } = useGameData(gameId);
@@ -91,9 +94,11 @@ const GameSelector = () => {
 
   const handleDay = (event: any) => {
     setDay(event.target.value - 1);
+    setGameId(undefined);
   };
   const handleSeason = (event: any) => {
     setSeason(event.target.value - 1);
+    setGameId(undefined);
   };
   const handleGameId = (event: any) => {
     setGameId(event.target.value);
@@ -112,13 +117,13 @@ const GameSelector = () => {
   }, [day, season]);
 
   return (
-    <div>
-      <label htmlFor="season">Season</label>
-      <input id="season" type="number" onChange={handleSeason} />
-      <label htmlFor="day">Day</label>
-      <input id="day" type="number" onChange={handleDay} />
-      <select name="game" id="game" onChange={handleGameId}>
-        <option value="none" selected disabled hidden>
+    <div className="gameSelector">
+      <label htmlFor="season" className="gameSelectorLabel">Season</label>
+      <input id="season" type="number" onChange={handleSeason} className="gameSelectorInput"/>
+      <label htmlFor="day" className="gameSelectorLabel">Day</label>
+      <input id="day" type="number" onChange={handleDay} className="gameSelectorInput"/>
+      <select name="game" id="game" onChange={handleGameId} value={gameId}>
+        <option value={undefined} selected disabled hidden>
           {games ? "Select a game" : "Enter a day"}
         </option>
         {games &&

@@ -15,3 +15,35 @@ body {
 tr {
     @apply text-xs;
 }
+
+th.playerName {
+  @apply w-36;
+}
+
+th {
+  @apply text-right;
+}
+
+.statCell {
+  @apply w-6 text-right;
+}
+
+.statRow:hover {
+  @apply bg-yellow-200;
+}
+
+.gameSelectorLabel {
+  @apply w-60;
+}
+
+.gameSelectorInput {
+  @apply w-12 border border-black mx-4;
+}
+
+.gameSelector select {
+  @apply border border-black;
+}
+
+.statCard {
+  @apply my-2;
+}
