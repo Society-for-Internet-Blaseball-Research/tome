@@ -23,44 +23,49 @@ export async function fetchJson<T>(
   return fetch(`${url}${qs}`).then((res) => res.json());
 }
 
+let stream: EventSource | undefined;
+
+function setupStream(gameId: string, setGame: any) {
+  if (stream !== undefined) {
+    stream.close();
+  }
+  stream = new EventSource(`${BLASEBALL_ROOT}/events/streamData`);
+  stream.addEventListener("open", () => {
+    console.log(`listening for game updates (id=${gameId})`); // eslint-disable-line no-console
+  });
+
+  stream.addEventListener("message", (event) => {
+    const g = JSON.parse(event.data).value?.games?.schedule?.find(
+      (game: Game) => game.id === gameId
+    );
+    if (g) {
+      setGame(g);
+      if (g.gameComplete && stream !== undefined) {
+        stream.close();
+      }
+    }
+  });
+
+  stream.addEventListener("error", () => {
+    console.log(`restarting stream ${gameId}`); // eslint-disable-line no-console
+    if (stream !== undefined) {
+      stream.close();
+    }
+    setTimeout(() => setupStream(gameId, setGame), 2000);
+  });
+}
+
 export function useGameData(id: string): GameDataHookReturn {
   const [error, setError] = useState<any>();
 
   // game data
   const [gameData, setGame] = useState<Game | undefined>();
-  let stream: EventSource | undefined;
   useEffect(() => {
     fetchJson<Game>(`${BLASEBALL_ROOT}/database/gameById/${id}`)
       // eslint-disable-next-line consistent-return
       .then((data) => {
         setGame(data);
-
-        // fetch game updates from streamData
-        if (stream !== undefined) {
-          if (data.gameComplete) {
-            stream.close();
-            stream = undefined;
-          } else {
-            stream = new EventSource(`${BLASEBALL_ROOT}/events/streamData`);
-            stream.addEventListener("open", () => {
-              console.log(`listening for game updates (id=${id})`); // eslint-disable-line no-console
-            });
-            stream.addEventListener("message", (event) => {
-              const g = JSON.parse(event.data).value?.games?.find(
-                (game: Game) => game.id === id
-              );
-              if (g) {
-                setGame(g);
-              }
-            });
-            stream.addEventListener("error", (err) => {
-              setError(err);
-            });
-            return () => {
-              stream?.close();
-            };
-          }
-        }
+        setupStream(id, setGame);
       })
       .catch((err) => setError(err));
   }, [id]);

@@ -41,6 +41,7 @@ const BoxScore = ({ gameId }: { gameId: string | undefined }) => {
   }
   const { error, game, stats } = useGameData(gameId);
   if (error) {
+    console.log(error);
     return <Error>{error.toString()}</Error>;
   }
 
