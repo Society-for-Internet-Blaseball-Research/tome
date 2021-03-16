@@ -2,6 +2,7 @@ export interface Game {
   id: string;
 
   awayBatter: string;
+  awayBatterName: string;
   awayTeam: string;
   awayTeamName: string;
   awayTeamNickname: string;
@@ -10,12 +11,26 @@ export interface Game {
   day: number;
   gameComplete: boolean;
   homeBatter: string;
+  homeBatterName: string;
   homeTeam: string;
   homeTeamName: string;
   homeTeamNickname: string;
   homeTeamEmoji: string;
   season: number;
   statsheet: string;
+}
+
+export interface Team {
+  id: string;
+  lineup: string[];
+  rotation: string[];
+  fullName: string;
+  location: string;
+  nickname: string;
+  shorthand: string;
+  emoji: string;
+  slogan: string;
+  winStreak: number;
 }
 
 export interface GameStatsheet {

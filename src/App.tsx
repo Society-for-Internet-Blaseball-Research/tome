@@ -13,12 +13,14 @@ const StatCard = ({
   stats,
   cols,
   team,
+  batter,
 }: {
   stats: any;
   cols: any;
   team?: string;
-}) => (
-  <div className="statCard">
+  batter?: string;
+}) => {
+  return (<div className="statCard">
     {team && <div>{team}</div>}
     <table>
       <tr>
@@ -32,7 +34,7 @@ const StatCard = ({
           sheet[cols[0][0]] > 0 &&
           (!team || sheet.team === team) && (
             <tr className="statRow">
-              <th className="playerName">{sheet.name}</th>
+              <th className="playerName">{batter === sheet.name ? emoji('127951') : ''} {sheet.name}</th>
               {cols.map((col: any) => (
                 <td className="statCell">{sheet[col[0]]}</td>
               ))}
@@ -40,8 +42,8 @@ const StatCard = ({
           )
       )}
     </table>
-  </div>
-);
+  </div>);
+};
 
 const BoxScore = ({ gameId }: { gameId: string | undefined }) => {
   if (!gameId) {
@@ -80,8 +82,8 @@ const BoxScore = ({ gameId }: { gameId: string | undefined }) => {
 
   return (
     <div>
-      <StatCard stats={stats} cols={battingCols} team={game.awayTeamName} />
-      <StatCard stats={stats} cols={battingCols} team={game.homeTeamName} />
+      <StatCard stats={stats} cols={battingCols} team={game.awayTeamName} batter={game.awayBatterName} />
+      <StatCard stats={stats} cols={battingCols} team={game.homeTeamName} batter={game.homeBatterName} />
       <StatCard stats={stats} cols={pitchingCols} />
     </div>
   );

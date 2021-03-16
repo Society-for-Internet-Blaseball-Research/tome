@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { BLASEBALL_ROOT } from "./env";
-import { Game, GameStatsheet, TeamStatsheet, PlayerStatsheet } from "./data";
+import { Game, GameStatsheet, TeamStatsheet, PlayerStatsheet, Team } from "./data";
 
 interface GameDataHookReturn {
   error: any;
@@ -55,11 +55,23 @@ function setupStream(gameId: string, setGame: any) {
   });
 }
 
+async function makeLineupOrder(teamId: string) {
+  return fetchJson<Team>(`${BLASEBALL_ROOT}/database/team?id=${teamId}`)
+  .then((team) => {
+    const res = new Map()
+    for (var i = 0; i < team.lineup.length; i++) {
+      res.set(team.lineup[i], i);
+    }
+    return res;
+  });
+}
+
 export function useGameData(id: string): GameDataHookReturn {
   const [error, setError] = useState<any>();
 
   // game data
   const [gameData, setGame] = useState<Game | undefined>();
+  const [lineupOrder, setlineupOrder] = useState<Map>();
   useEffect(() => {
     fetchJson<Game>(`${BLASEBALL_ROOT}/database/gameById/${id}`)
       // eslint-disable-next-line consistent-return
@@ -68,6 +80,12 @@ export function useGameData(id: string): GameDataHookReturn {
         if (data && !data.gameComplete) {
           setupStream(id, setGame);
         }
+        Promise.all([
+          makeLineupOrder(data.awayTeam),
+          makeLineupOrder(data.homeTeam)
+        ]).then((values) => {
+          setlineupOrder(new Map([...values[0], ...values[1]]));
+        });
       })
       .catch((err) => setError(err));
   }, [id]);
@@ -107,7 +125,7 @@ export function useGameData(id: string): GameDataHookReturn {
         .then((data) => setTeamStatsheets(data))
         .catch((err) => setError(err));
     }
-  }, [gameStatsheets, ...updateStatsOn]);
+  }, [gameStatsheets]);
 
   // player statsheets
   const [playerStatsheets, setPlayerStatsheets] = useState<PlayerStatsheet[]>(
@@ -127,7 +145,7 @@ export function useGameData(id: string): GameDataHookReturn {
             (rv[x.playerId] = rv[x.playerId] || []).push(x);
             return rv;
           }, {});
-          const d = [];
+          let d = [];
           for (const key in group) {
             d.push(
               group[key].reduce((rv: PlayerStatsheet, x: PlayerStatsheet) => {
@@ -165,11 +183,14 @@ export function useGameData(id: string): GameDataHookReturn {
               }, {})
             );
           }
+          if (lineupOrder !== undefined) {
+            d = d.sort((a, b) => lineupOrder.get(a.playerId) > lineupOrder.get(b.playerId) ? 1 : -1);
+          }
           setPlayerStatsheets(d);
         })
         .catch((err) => setError(err));
     }
-  }, [teamStatsheets, ...updateStatsOn]);
+  }, [teamStatsheets, lineupOrder]);
 
   return {
     error,
@@ -181,15 +202,3 @@ export function useGameData(id: string): GameDataHookReturn {
     },
   };
 }
-
-/*
-export function fetchGames(season: number, day: number): Game[] | undefined {
-  const [games, setGames] = useState<Game[] | undefined>();
-  fetchJson<Game[]>(`${BLASEBALL_ROOT}/database/games?season=${season}&day=${day}`)
-    .then((data) => {
-      console.log(data);
-      setGames(data);
-    })
-  return games;
-}
-*/
