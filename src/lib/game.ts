@@ -120,41 +120,43 @@ export function useGameData(id: string): GameDataHookReturn {
             (rv[x.playerId] = rv[x.playerId] || []).push(x);
             return rv;
           }, {});
-          let d = [];
+          const d = [];
           for (const key in group) {
-            d.push(group[key].reduce((rv: PlayerStatsheet, x: PlayerStatsheet) => {
-              let r: PlayerStatsheet = {
-                id: x.id,
-                playerId: x.playerId,
-                name: x.name,
-                team: x.team,
-                teamId: x.teamId,
-                atBats: x.atBats + (rv.atBats || 0),
-                caughtStealing: x.caughtStealing + (rv.caughtStealing || 0),
-                doubles: x.doubles + (rv.doubles || 0),
-                earnedRuns: x.earnedRuns + (rv.earnedRuns || 0),
-                groundIntoDp: x.groundIntoDp + (rv.groundIntoDp || 0),
-                hitBatters: x.hitBatters + (rv.hitBatters || 0),
-                hitByPitch: x.hitByPitch + (rv.hitByPitch || 0),
-                hits: x.hits + (rv.hits || 0),
-                hitsAllowed: x.hitsAllowed + (rv.hitsAllowed || 0),
-                homeRuns: x.homeRuns + (rv.homeRuns || 0),
-                losses: x.losses + (rv.losses || 0),
-                outsRecorded: x.outsRecorded + (rv.outsRecorded || 0),
-                pitchesThrown: x.pitchesThrown + (rv.pitchesThrown || 0),
-                quadruples: x.quadruples + (rv.quadruples || 0),
-                rbis: x.rbis + (rv.rbis || 0),
-                runs: x.runs + (rv.runs || 0),
-                stolenBases: x.stolenBases + (rv.stolenBases || 0),
-                strikeouts: x.strikeouts + (rv.strikeouts || 0),
-                struckouts: x.struckouts + (rv.struckouts || 0),
-                triples: x.triples + (rv.triples || 0),
-                walks: x.walks + (rv.walks || 0),
-                walksIssued: x.walksIssued + (rv.walksIssued || 0),
-                wins: x.wins + (rv.wins || 0)
-              };
-              return r;
-            }, {}));
+            d.push(
+              group[key].reduce((rv: PlayerStatsheet, x: PlayerStatsheet) => {
+                const r: PlayerStatsheet = {
+                  id: x.id,
+                  playerId: x.playerId,
+                  name: x.name,
+                  team: x.team,
+                  teamId: x.teamId,
+                  atBats: x.atBats + (rv.atBats || 0),
+                  caughtStealing: x.caughtStealing + (rv.caughtStealing || 0),
+                  doubles: x.doubles + (rv.doubles || 0),
+                  earnedRuns: x.earnedRuns + (rv.earnedRuns || 0),
+                  groundIntoDp: x.groundIntoDp + (rv.groundIntoDp || 0),
+                  hitBatters: x.hitBatters + (rv.hitBatters || 0),
+                  hitByPitch: x.hitByPitch + (rv.hitByPitch || 0),
+                  hits: x.hits + (rv.hits || 0),
+                  hitsAllowed: x.hitsAllowed + (rv.hitsAllowed || 0),
+                  homeRuns: x.homeRuns + (rv.homeRuns || 0),
+                  losses: x.losses + (rv.losses || 0),
+                  outsRecorded: x.outsRecorded + (rv.outsRecorded || 0),
+                  pitchesThrown: x.pitchesThrown + (rv.pitchesThrown || 0),
+                  quadruples: x.quadruples + (rv.quadruples || 0),
+                  rbis: x.rbis + (rv.rbis || 0),
+                  runs: x.runs + (rv.runs || 0),
+                  stolenBases: x.stolenBases + (rv.stolenBases || 0),
+                  strikeouts: x.strikeouts + (rv.strikeouts || 0),
+                  struckouts: x.struckouts + (rv.struckouts || 0),
+                  triples: x.triples + (rv.triples || 0),
+                  walks: x.walks + (rv.walks || 0),
+                  walksIssued: x.walksIssued + (rv.walksIssued || 0),
+                  wins: x.wins + (rv.wins || 0),
+                };
+                return r;
+              }, {})
+            );
           }
           setPlayerStatsheets(d);
         })
