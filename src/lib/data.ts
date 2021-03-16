@@ -2,14 +2,18 @@ export interface Game {
   id: string;
 
   awayBatter: string;
+  awayTeam: string;
   awayTeamName: string;
   awayTeamNickname: string;
+  awayTeamEmoji: string;
   baseRunners: string[];
   day: number;
   gameComplete: boolean;
   homeBatter: string;
+  homeTeam: string;
   homeTeamName: string;
   homeTeamNickname: string;
+  homeTeamEmoji: string;
   season: number;
   statsheet: string;
 }

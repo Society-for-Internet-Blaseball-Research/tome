@@ -4,6 +4,11 @@ import Error from "./Error";
 import { Game } from "./lib/data";
 import { BLASEBALL_ROOT } from "./lib/env";
 
+function emoji(e:string) {
+  const n = Number(e);
+  return Number.isNaN(n) ? e : String.fromCodePoint(n);
+}
+
 const StatCard = ({
   stats,
   cols,
@@ -41,7 +46,6 @@ const BoxScore = ({ gameId }: { gameId: string | undefined }) => {
   }
   const { error, game, stats } = useGameData(gameId);
   if (error) {
-    console.log(error);
     return <Error>{error.toString()}</Error>;
   }
 
@@ -120,7 +124,7 @@ const GameSelector = () => {
         {games &&
           games.map((game: Game) => (
             <option value={game.id}>
-              {game.awayTeamName} at {game.homeTeamName}
+              {emoji(game.awayTeamEmoji)} {game.awayTeamNickname} at {emoji(game.homeTeamEmoji)} {game.homeTeamNickname}
             </option>
           ))}
       </select>

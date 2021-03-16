@@ -65,7 +65,9 @@ export function useGameData(id: string): GameDataHookReturn {
       // eslint-disable-next-line consistent-return
       .then((data) => {
         setGame(data);
-        setupStream(id, setGame);
+        if (data && !data.gameComplete) {
+          setupStream(id, setGame);
+        }
       })
       .catch((err) => setError(err));
   }, [id]);
