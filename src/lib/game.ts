@@ -72,6 +72,10 @@ export function useGameData(id: string): GameDataHookReturn {
   // game data
   const [gameData, setGame] = useState<Game | undefined>();
   const [lineupOrder, setlineupOrder] = useState<Map>();
+  if (stream !== undefined) {
+    stream.close();
+    stream = undefined;
+  }
   useEffect(() => {
     fetchJson<Game>(`${BLASEBALL_ROOT}/database/gameById/${id}`)
       // eslint-disable-next-line consistent-return
