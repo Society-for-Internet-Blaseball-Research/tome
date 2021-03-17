@@ -9,6 +9,8 @@ jobs:
       - uses: actions/checkout@v2
       - run: npm ci
       - run: npm run build
+        env:
+          CI: false
       - run: git --work-tree build add --all
       - run: git -c user.name=Robot -c user.email=nobody@sibr.dev commit -m "Automatic deploy"
       - run: git push origin HEAD:gh-pages --force
