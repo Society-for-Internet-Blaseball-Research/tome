@@ -10,6 +10,10 @@ body {
     body {
         @apply bg-black text-gray-100;
     }
+
+    .statRow:nth-child(even) {
+      @apply bg-gray-900;
+    }
 }
 
 tr {
@@ -30,6 +34,10 @@ th {
 
 .statRow:hover {
   @apply bg-yellow-200;
+}
+
+.statRow:nth-child(even) {
+  @apply bg-gray-100;
 }
 
 .gameSelectorLabel {
