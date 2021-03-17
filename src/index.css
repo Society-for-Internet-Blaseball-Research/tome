@@ -32,12 +32,12 @@ th {
   @apply w-6 text-right;
 }
 
-.statRow:hover {
-  @apply bg-yellow-200;
-}
-
 .statRow:nth-child(even) {
   @apply bg-gray-100;
+}
+
+.statRow:hover {
+  @apply bg-yellow-200;
 }
 
 .gameSelectorLabel {
