@@ -11,6 +11,7 @@ jobs:
       - run: npm run build
         env:
           CI: false
+      - run: echo tome.sibr.dev > build/CNAME
       - run: git --work-tree build add --all
       - run: git -c user.name=Robot -c user.email=nobody@sibr.dev commit -m "Automatic deploy"
       - run: git push origin HEAD:gh-pages --force
