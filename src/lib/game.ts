@@ -71,7 +71,7 @@ export function useGameData(id: string): GameDataHookReturn {
 
   // game data
   const [gameData, setGame] = useState<Game | undefined>();
-  const [lineupOrder, setlineupOrder] = useState<Map>();
+  const [lineupOrder, setlineupOrder] = useState<Map<string, number>>();
   if (stream !== undefined) {
     stream.close();
     stream = undefined;
@@ -188,7 +188,7 @@ export function useGameData(id: string): GameDataHookReturn {
             );
           }
           if (lineupOrder !== undefined) {
-            d = d.sort((a, b) => lineupOrder.get(a.playerId) > lineupOrder.get(b.playerId) ? 1 : -1);
+            d = d.sort((a, b) => (lineupOrder.get(a.playerId) ?? 0) > (lineupOrder.get(b.playerId) ?? 0) ? 1 : -1);
           }
           setPlayerStatsheets(d);
         })
