@@ -8,11 +8,19 @@ body {
 
 :root.dark {
     body {
-        @apply bg-black text-gray-100;
+        @apply bg-black text-gray-200;
     }
 
     .statRow:nth-child(even) {
       @apply bg-gray-900;
+    }
+
+    .gameSelectorInput {
+      @apply border-white bg-black;
+    }
+
+    .gameSelector select {
+      @apply border-white bg-black;
     }
 }
 
