@@ -33,7 +33,7 @@ const StatCard = ({
         (sheet: any) =>
           sheet[cols[0][0]] > 0 &&
           (!team || sheet.team === team) && (
-            <tr className="statRow">
+            <tr id={sheet.playerId} className="statRow">
               <th className="playerName">{batter === sheet.name ? emoji('127951') : ''} {sheet.name}</th>
               {cols.map((col: any) => (
                 <td className="statCell">{sheet[col[0]]}</td>
