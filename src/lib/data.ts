@@ -79,3 +79,12 @@ export interface PlayerStatsheet {
   walksIssued: number;
   wins: number;
 }
+
+export interface SimulationData {
+  day: number;
+  season: number;
+}
+
+export interface SeasonDayCount {
+  dayCount: number;
+}

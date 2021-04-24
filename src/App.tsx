@@ -1,13 +1,27 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useGameData, fetchJson } from "./lib/game";
 import Error from "./Error";
-import { Game } from "./lib/data";
+import { Game, SimulationData, SeasonDayCount } from "./lib/data";
 import { BLASEBALL_ROOT } from "./lib/env";
 
 function emoji(e:string) {
   const n = Number(e);
   return Number.isNaN(n) ? e : String.fromCodePoint(n);
 }
+
+function debounce(func, wait) {
+  let timeout;
+  return function() {
+    const context = this;
+    const args = arguments;
+    const later = function() {
+      timeout = null;
+      func.apply(context, args);
+    };
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+  };
+};
 
 const StatCard = ({
   stats,
@@ -46,7 +60,7 @@ const StatCard = ({
 };
 
 const BoxScore = ({ gameId }: { gameId: string | undefined }) => {
-  if (!gameId) {
+  if (!gameId || gameId === "0") {
     return <div>Select a game.</div>;
   }
   const { error, game, stats } = useGameData(gameId);
@@ -54,8 +68,12 @@ const BoxScore = ({ gameId }: { gameId: string | undefined }) => {
     return <Error>{error.toString()}</Error>;
   }
 
-  if (game === undefined || stats.player.length === 0) {
-    return <div>loading...</div>;
+  if (game === undefined) {
+    return <div>loading statsheets...</div>;
+  }
+
+  if (stats.player.length === 0) {
+    return <div>waiting for game to start...</div>;
   }
 
   const battingCols = [
@@ -89,43 +107,83 @@ const BoxScore = ({ gameId }: { gameId: string | undefined }) => {
   );
 };
 
-const GameSelector = () => {
+const SeasonSelector = ({curSeason, onChange, name}: {curSeason: number, onChange: any, name: string}) => {
+  let seasonOptions = [];
+  for (let i = curSeason; i >= 0; i--) {
+    seasonOptions.push(
+      <option value={i} key={i}>{i + 1}</option>
+    );
+  }
+  return (
+    <select name={name} onChange={onChange} class="gameSelectorInput">
+      <option value="-1" selected disabled hidden>{curSeason === -1 ? "loading" : name}</option>
+      {seasonOptions}
+    </select>
+  );
+}
+
+const GameSelector = (props: any) => {
   const [day, setDay] = useState<number | undefined>();
   const [season, setSeason] = useState<number | undefined>();
   const [gameId, setGameId] = useState<string | undefined>();
+  const [maxSeason, setMaxSeason] = useState<number | undefined>();
+  const [maxDay, setMaxDay] = useState<number | undefined>();
 
   const handleDay = (event: any) => {
-    setDay(event.target.value - 1);
-    setGameId(undefined);
+    console.log(event.target.value);
+    setDay(event.target.value);
+    setGameId("0");
   };
   const handleSeason = (event: any) => {
-    setSeason(event.target.value - 1);
-    setGameId(undefined);
+    setSeason(event.target.value);
+    setGameId("0");
+
+    setMaxDay(-1);
+    fetchJson<SeasonDayCount>(
+      `${BLASEBALL_ROOT}/database/seasondaycount?season=${event.target.value}`
+    ).then((data) => {
+      setMaxDay(data.dayCount + 1);
+    });
   };
   const handleGameId = (event: any) => {
     setGameId(event.target.value);
   };
 
   const [games, setGames] = useState<Game[] | undefined>();
-  useEffect(() => {
+  useEffect(debounce(() => {
     if (!day || !season) {
       return;
     }
+    setGames([]);
     fetchJson<Game[]>(
       `${BLASEBALL_ROOT}/database/games?season=${season}&day=${day}`
     ).then((data) => {
       setGames(data);
     });
-  }, [day, season]);
+  }, 500), [day, season]);
+
+  useEffect(() => {
+    // load current day
+    fetchJson<SimulationData>(
+      `${BLASEBALL_ROOT}/database/simulationData`
+    ).then((data) => {
+      if (!season) {
+        setMaxSeason(data.season);
+      }
+      if (!day) {
+        setMaxDay(data.day);
+      }
+    });
+  }, []);
 
   return (
     <div className="gameSelector">
-      <label htmlFor="season" className="gameSelectorLabel">Season</label>
-      <input id="season" type="number" onChange={handleSeason} className="gameSelectorInput"/>
-      <label htmlFor="day" className="gameSelectorLabel">Day</label>
-      <input id="day" type="number" onChange={handleDay} className="gameSelectorInput"/>
+      <label htmlFor="Season" className="gameSelectorLabel">Season</label>
+      <SeasonSelector curSeason={maxSeason} onChange={handleSeason} name="Season"/>
+      <label htmlFor="Day" className="gameSelectorLabel">Day</label>
+      <SeasonSelector curSeason={maxDay} onChange={handleDay} name="Day"/>
       <select name="game" id="game" onChange={handleGameId} value={gameId}>
-        <option value={undefined} selected disabled hidden>
+        <option value="0" selected disabled hidden>
           {games ? "Select a game" : "Enter a day"}
         </option>
         {games &&

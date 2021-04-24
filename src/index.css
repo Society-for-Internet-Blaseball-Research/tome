@@ -53,7 +53,7 @@ th {
 }
 
 .gameSelectorInput {
-  @apply w-12 border border-black mx-4;
+  @apply w-12 border border-black mx-2;
 }
 
 .gameSelector select {
