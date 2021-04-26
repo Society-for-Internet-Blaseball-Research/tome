@@ -9,7 +9,7 @@ function emoji(e:string) {
   return Number.isNaN(n) ? e : String.fromCodePoint(n);
 }
 
-function debounce(func, wait) {
+function debounce(func: any, wait: number) {
   let timeout;
   return function() {
     const context = this;
@@ -73,7 +73,12 @@ const BoxScore = ({ gameId }: { gameId: string | undefined }) => {
   }
 
   if (stats.player.length === 0) {
-    return <div>waiting for game to start...</div>;
+    if (game.gameComplete) {
+      return <div>loading statsheets...</div>;
+    }
+    else {
+      return <div>waiting for game to start...</div>;
+    }
   }
 
   const battingCols = [
