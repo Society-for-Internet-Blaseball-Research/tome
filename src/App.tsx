@@ -9,20 +9,6 @@ function emoji(e:string) {
   return Number.isNaN(n) ? e : String.fromCodePoint(n);
 }
 
-function debounce(func: any, wait: number) {
-  let timeout;
-  return function() {
-    const context = this;
-    const args = arguments;
-    const later = function() {
-      timeout = null;
-      func.apply(context, args);
-    };
-    clearTimeout(timeout);
-    timeout = setTimeout(later, wait);
-  };
-};
-
 const StatCard = ({
   stats,
   cols,
@@ -120,7 +106,7 @@ const SeasonSelector = ({curSeason, onChange, name}: {curSeason: number, onChang
     );
   }
   return (
-    <select name={name} onChange={onChange} class="gameSelectorInput">
+    <select name={name} onChange={onChange} className="gameSelectorInput">
       <option value="-1" selected disabled hidden>{curSeason === -1 ? "loading" : name}</option>
       {seasonOptions}
     </select>
@@ -131,8 +117,8 @@ const GameSelector = (props: any) => {
   const [day, setDay] = useState<number | undefined>();
   const [season, setSeason] = useState<number | undefined>();
   const [gameId, setGameId] = useState<string | undefined>();
-  const [maxSeason, setMaxSeason] = useState<number | undefined>();
-  const [maxDay, setMaxDay] = useState<number | undefined>();
+  const [maxSeason, setMaxSeason] = useState<number>(-1);
+  const [maxDay, setMaxDay] = useState<number>(-1);
 
   const handleDay = (event: any) => {
     console.log(event.target.value);
@@ -155,7 +141,7 @@ const GameSelector = (props: any) => {
   };
 
   const [games, setGames] = useState<Game[] | undefined>();
-  useEffect(debounce(() => {
+  useEffect(() => {
     if (!day || !season) {
       return;
     }
@@ -165,7 +151,7 @@ const GameSelector = (props: any) => {
     ).then((data) => {
       setGames(data);
     });
-  }, 500), [day, season]);
+  }, [day, season]);
 
   useEffect(() => {
     // load current day
