@@ -253,6 +253,7 @@ const GameSelector = (props: any) => {
       </select>
       <BoxScore gameId={gameId} />
       <DisplayModeButton />
+      <div className="footer">Icons from <a href="https://game-icons.net/">game-icons.net</a></div>
     </div>
   );
 };

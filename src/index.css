@@ -71,3 +71,7 @@ th {
 .displayModeButton {
   @apply bg-transparent cursor-pointer;
 }
+
+.footer {
+  @apply text-gray-500 italic text-xs;
+}
