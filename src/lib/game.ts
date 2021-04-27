@@ -2,7 +2,13 @@
 
 import { useEffect, useState } from "react";
 import { BLASEBALL_ROOT } from "./env";
-import { Game, GameStatsheet, TeamStatsheet, PlayerStatsheet, Team } from "./data";
+import {
+  Game,
+  GameStatsheet,
+  TeamStatsheet,
+  PlayerStatsheet,
+  Team,
+} from "./data";
 
 interface GameDataHookReturn {
   error: any;
@@ -56,14 +62,15 @@ function setupStream(gameId: string, setGame: any) {
 }
 
 async function makeLineupOrder(teamId: string) {
-  return fetchJson<Team>(`${BLASEBALL_ROOT}/database/team?id=${teamId}`)
-  .then((team) => {
-    const res = new Map()
-    for (var i = 0; i < team.lineup.length; i++) {
-      res.set(team.lineup[i], i);
+  return fetchJson<Team>(`${BLASEBALL_ROOT}/database/team?id=${teamId}`).then(
+    (team) => {
+      const res = new Map();
+      for (let i = 0; i < team.lineup.length; i++) {
+        res.set(team.lineup[i], i);
+      }
+      return res;
     }
-    return res;
-  });
+  );
 }
 
 export function useGameData(id: string): GameDataHookReturn {
@@ -82,7 +89,7 @@ export function useGameData(id: string): GameDataHookReturn {
         }
         Promise.all([
           makeLineupOrder(data.awayTeam),
-          makeLineupOrder(data.homeTeam)
+          makeLineupOrder(data.homeTeam),
         ]).then((values) => {
           setlineupOrder(new Map([...values[0], ...values[1]]));
         });
@@ -184,7 +191,12 @@ export function useGameData(id: string): GameDataHookReturn {
             );
           }
           if (lineupOrder !== undefined) {
-            d = d.sort((a, b) => (lineupOrder.get(a.playerId) ?? 0) > (lineupOrder.get(b.playerId) ?? 0) ? 1 : -1);
+            d = d.sort((a, b) =>
+              (lineupOrder.get(a.playerId) ?? 0) >
+              (lineupOrder.get(b.playerId) ?? 0)
+                ? 1
+                : -1
+            );
           }
           setPlayerStatsheets(d);
         })
