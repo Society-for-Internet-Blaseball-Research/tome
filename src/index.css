@@ -22,6 +22,10 @@ body {
     .gameSelector select {
       @apply border-white bg-black;
     }
+
+    .statRow:hover {
+      @apply bg-indigo-800;
+    }
 }
 
 tr {
@@ -62,4 +66,8 @@ th {
 
 .statCard {
   @apply my-2;
+}
+
+.displayModeButton {
+  @apply bg-transparent cursor-pointer;
 }

@@ -4,6 +4,7 @@ import { useGameData, fetchJson } from "./lib/game";
 import Error from "./Error";
 import { Game, SimulationData, SeasonDayCount } from "./lib/data";
 import { BLASEBALL_ROOT } from "./lib/env";
+import { current, toggle } from "./lib/color-scheme";
 
 function emoji(e: string) {
   const n = Number(e);
@@ -143,6 +144,15 @@ const SeasonSelector = ({
   );
 };
 
+const DisplayModeButton = () => {
+  const [value, setValue] = useState<string>(current() === "light" ? "🌚" : "🌞");
+  const handleClick = (event: any) => {
+    toggle();
+    setValue(current() === "light" ? "🌚" : "🌞");
+  };
+  return <input type="button" onClick={handleClick} value={value} className="displayModeButton"/>
+};
+
 const GameSelector = (props: any) => {
   const history = useHistory();
   const [day, setDay] = useState<number | undefined>();
@@ -242,6 +252,7 @@ const GameSelector = (props: any) => {
           ))}
       </select>
       <BoxScore gameId={gameId} />
+      <DisplayModeButton />
     </div>
   );
 };

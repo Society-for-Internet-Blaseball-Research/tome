@@ -1,6 +1,6 @@
 const media = window.matchMedia("(prefers-color-scheme: dark)");
 
-function current(): "light" | "dark" {
+export function current(): "light" | "dark" {
   const text = window.localStorage.getItem("color-scheme");
   if (text === "light" || text === "dark") {
     return text;
